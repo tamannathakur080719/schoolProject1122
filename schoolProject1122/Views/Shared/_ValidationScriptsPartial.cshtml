@@ -1,0 +1,64 @@
+﻿@model IEnumerable<schoolProject1122.Models.Student>
+
+@{
+    ViewData["Title"] = "Students";
+}
+
+<h2>Students</h2>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" value="@Context.Request.Query["search"]" class="form-control" placeholder="Search by student name..." />
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-outline-secondary" href="@Url.Action("Index")">Reset</a>
+    </div>
+</form>
+
+@if (TempData["msg"] != null)
+{
+    <div class="alert alert-success">@TempData["msg"]</div>
+}
+
+@{
+    var grouped = Model.GroupBy(s => s.ClassRoom?.Name ?? "(No Class)")
+                       .OrderBy(g => g.Key);
+}
+
+@foreach (var group in grouped)
+{
+    <h4 class="mt-4">@group.Key</h4>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Roll</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Image</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in group)
+            {
+                <tr>
+                    <td>@s.RollNumber</td>
+                    <td>@s.Name</td>
+                    <td>@s.Age</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(s.ImagePath))
+                        {
+                            <img src="@s.ImagePath" alt="img" style="height:40px;border-radius:4px;" />
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-info" href="@Url.Action("Subjects", "Students", new { id = s.Id })">Subjects & Teachers</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<partial name="_ValidationScriptsPartial" />
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

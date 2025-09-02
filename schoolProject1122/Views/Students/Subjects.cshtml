@@ -1,0 +1,34 @@
+﻿@model IEnumerable<schoolProject1122.Models.TeacherSubjectClass>
+@{
+    var student = ViewBag.Student as schoolProject1122.Models.Student;
+    ViewData["Title"] = $"Subjects of {student!.Name}";
+}
+
+<h3>Subjects of @student!.Name (Class: @(student.ClassRoom?.Name ?? "N/A"))</h3>
+
+<table class="table table-bordered table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Languages</th>
+            <th>Teacher(s)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grp in Model.GroupBy(m => m.Subject))
+        {
+            <tr>
+                <td>@grp.Key.Name</td>
+                <td>
+                    @{
+                        var langs = grp.Key.SubjectLanguages.Select(sl => sl.Language.Name);
+                    }
+                    @string.Join(", ", langs)
+                </td>
+                <td>
+                    @string.Join(", ", grp.Select(x => x.Teacher.Name).Distinct())
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
